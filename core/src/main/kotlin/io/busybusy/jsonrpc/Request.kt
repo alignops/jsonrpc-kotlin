@@ -12,4 +12,3 @@ interface Request {
 interface RequestWithParameters<out Parameters : Any> : Request {
     val params: Parameters
 }
-
