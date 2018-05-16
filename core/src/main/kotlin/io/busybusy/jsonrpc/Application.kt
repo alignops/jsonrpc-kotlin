@@ -6,4 +6,3 @@ import okio.BufferedSource
 interface Application {
     fun handle(source: BufferedSource, sink: BufferedSink)
 }
-

@@ -15,7 +15,7 @@ import kotlin.reflect.jvm.javaType
 import kotlin.reflect.jvm.jvmErasure
 
 class HandlerRoute<Parameters : Any, Output : Any>(
-    val handlerFactory: () -> Handler<Parameters, Output>
+    private val handlerFactory: () -> Handler<Parameters, Output>
 ) : Route<Parameters, Output> {
     override fun createSession() = HandlerRouteSession.create(handlerFactory())
 }
