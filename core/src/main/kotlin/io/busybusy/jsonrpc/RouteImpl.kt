@@ -3,6 +3,7 @@ package io.busybusy.jsonrpc
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
+import java.lang.reflect.InvocationTargetException
 import java.lang.reflect.Type
 import kotlin.reflect.KCallable
 import kotlin.reflect.KType
@@ -40,7 +41,16 @@ class HandlerRouteSession<Parameters : Any, Output : Any> private constructor(
     override fun createResponse(id: String?, result: Output) = SuccessResponse(id, result)
     override fun createResponseAdapter(moshi: Moshi): JsonAdapter<ResponseWithResult<Output>> = moshi.adapter(responseType)
 
-    override fun invoke(params: Parameters): Output = method.call(handler, params)
+    /**
+     * Executes the handler through reflection. A {@code InvocationTargetException} exception is thrown when
+     * {@code java.reflect.Method::call} gets an exception back from the target method. This exception should be unwrapped
+     * and rethrown as normal.
+     */
+    override fun invoke(params: Parameters): Output = try {
+        method.call(handler, params)
+    } catch (failure: InvocationTargetException) {
+        throw failure.targetException
+    }
 
     companion object {
         /**

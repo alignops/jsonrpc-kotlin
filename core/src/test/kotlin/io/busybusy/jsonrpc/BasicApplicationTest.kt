@@ -110,6 +110,26 @@ internal class BasicApplicationTest {
         """.trimIndent(), response.readUtf8())
     }
 
+    @Test
+    fun `it responds on custom rpc error`() {
+        val application = BasicApplication.create {
+            method("myError") { CustomErrorHandler() }
+        }
+
+        val response = application.handle("""
+            {
+                "jsonrpc": "2.0",
+                "id": "foo",
+                "method": "myError",
+                "params": "my little pony"
+            }
+        """.trimIndent())
+
+        assertEquals("""
+            {"id":"foo","error":{"code":-32000,"message":"Your message was `my little pony`"},"jsonrpc":"2.0"}
+        """.trimIndent(), response.readUtf8())
+    }
+
     class StringToIntHandler : Handler<String, Int> {
         override fun invoke(p1: String) = p1.toInt()
     }
@@ -129,5 +149,13 @@ internal class BasicApplicationTest {
                 require(baz.isNotEmpty())
             }
         }
+    }
+
+    class CustomErrorHandler : Handler<String, Unit> {
+        override fun invoke(p1: String) {
+            throw MyRpcException("Your message was `$p1`")
+        }
+
+        class MyRpcException(message: String) : CustomRpcException(-32000, message)
     }
 }
