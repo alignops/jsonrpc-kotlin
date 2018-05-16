@@ -1,7 +1,7 @@
 package io.busybusy.jsonrpc
 
 sealed class RpcException(
-    val details: ResponseWithError.Details,
+    val details: ErrorResponse.Details,
     previous: Throwable? = null
 ) : Exception(details.message, previous)
 
