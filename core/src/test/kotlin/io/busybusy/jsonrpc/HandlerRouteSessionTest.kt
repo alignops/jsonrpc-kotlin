@@ -56,8 +56,8 @@ internal class HandlerRouteSessionTest {
 
     @Test
     fun `it creates a response adapter for parameterized generic types`() {
-        HandlerRouteSession.create(object : Handler<Unit, Array<String>> {
-            override fun invoke(p1: Unit) = arrayOf("A", "B", "C")
+        HandlerRouteSession.create(object : Handler<Unit, List<String>> {
+            override fun invoke(p1: Unit) = listOf("A", "B", "C")
         }) `should create result` """["A","B","C"]"""
     }
 
@@ -100,8 +100,8 @@ internal class HandlerRouteSessionTest {
 
     @Test
     fun `it creates a request adapter for basic generic types`() {
-        HandlerRouteSession.create(object : Handler<Array<String>, Unit> {
-            override fun invoke(p1: Array<String>) {
+        HandlerRouteSession.create(object : Handler<List<String>, Unit> {
+            override fun invoke(p1: List<String>) {
                 assertEquals(arrayOf("A", "B").toList(), p1.toList())
             }
         }) `should receive params` """

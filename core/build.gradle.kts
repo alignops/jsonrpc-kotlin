@@ -7,7 +7,7 @@ dependencies {
     implementation(kotlin("reflect"))
 
     implementation(group = "com.squareup.okio", name = "okio", version = "1.14.1")
-    implementation(group = "com.squareup.moshi", name = "moshi-kotlin", version = "1.5.0")
+    implementation(group = "com.squareup.moshi", name = "moshi-kotlin", version = "1.6.0")
 }
 
 dependencies {
