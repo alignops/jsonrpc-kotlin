@@ -55,7 +55,8 @@ import okio.BufferedSource
  */
 class BasicApplication private constructor(
     private val routes: Map<String, Route<Any, Any>>,
-    private val moshi: Moshi
+    private val moshi: Moshi,
+    private val errorHandler: (Throwable) -> Unit
 ) : Application {
     /**
      * Every incoming request
@@ -85,6 +86,7 @@ class BasicApplication private constructor(
             return
         } catch (other: Throwable) {
             errorAdapter.toJson(sink, other.toInternalErrorResponse(id = null))
+            errorHandler(other)
             return
         }
 
@@ -115,6 +117,7 @@ class BasicApplication private constructor(
             if (peek.id != null) {
                 errorAdapter.toJson(sink, other.toInternalErrorResponse(peek.id))
             }
+            errorHandler(other)
         }
     }
 
@@ -171,8 +174,9 @@ class BasicApplication private constructor(
     companion object {
         fun create(
             moshi: Moshi = defaultMoshiBuilder().build(),
+            errorHandler: (Throwable) -> Unit = { it.printStackTrace() },
             configure: Configure.() -> Unit
-        ) = BasicApplication(Configure().apply(configure).routes, moshi)
+        ) = BasicApplication(Configure().apply(configure).routes, moshi, errorHandler)
     }
 
     class Configure internal constructor() {
